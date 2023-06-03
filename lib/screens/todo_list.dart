@@ -11,6 +11,9 @@ class TodoListScreen extends StatefulWidget {
 
 class _TodoListScreenState extends State<TodoListScreen> {
   List<Todo> _todoList = [];
+  List<Todo>? _searchedTodoList;
+  String? title, description;
+  DateTime? date;
 
   void _addTodo(String title, String description, DateTime date) {
     setState(() {
@@ -23,6 +26,22 @@ class _TodoListScreenState extends State<TodoListScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void searchTodo(String searchKey) {
+    if (searchKey.isEmpty) {
+      setState(() {
+        _searchedTodoList = null;
+      });
+    } else {
+      List<Todo> results = _todoList
+          .where((element) => element.title.contains(searchKey))
+          .toList();
+
+      setState(() {
+        _searchedTodoList = results;
+      });
+    }
   }
 
   @override
@@ -57,9 +76,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
             Expanded(
               child: ListView.builder(
                 itemBuilder: ((context, index) {
-                  return _showTodoTile(_todoList[index]);
+                  Todo item = _searchedTodoList != null
+                      ? _searchedTodoList![index]
+                      : _todoList[index];
+                  return _showTodoTile(item);
                 }),
-                itemCount: _todoList.length,
+                itemCount: _searchedTodoList != null
+                    ? _searchedTodoList!.length
+                    : _todoList.length,
               ),
             ),
           ],
@@ -103,6 +127,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         fontSize: 16,
         color: const Color(0xffAFAFAF),
       ),
+      onChanged: searchTodo,
       decoration: InputDecoration(
           fillColor: const Color(0xff1d1d1d),
           filled: true,
@@ -173,9 +198,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   Widget _bottomSheetWidget() {
-    String? title, description;
-    DateTime? date;
-
     return Padding(
       padding: EdgeInsets.fromLTRB(
           25.0, 25.0, 25.0, MediaQuery.of(context).viewInsets.bottom),
@@ -271,6 +293,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
               const Spacer(),
               IconButton(
                   onPressed: () {
+                    print(title);
+                    print(description);
+                    print(date);
+                    // true , true, false
                     if (title != null && description != null && date != null) {
                       _addTodo(title!, description!, date!);
                     } else {
