@@ -12,24 +12,16 @@ class TodoListScreen extends StatefulWidget {
 class _TodoListScreenState extends State<TodoListScreen> {
   List<Todo> _todoList = [];
 
-  void _addTodo() {
+  void _addTodo(String title, String description, DateTime date) {
     setState(() {
-      _todoList = [
-        Todo(
-            title: "Do maths homework",
-            description: "krle bhai",
-            todoTime: DateTime(2023, 05, 24, 10, 30)),
-        Todo(
-            title: "Do physics homework",
-            description: "krle bhai",
-            todoTime: DateTime(2023, 05, 24, 10, 30))
-      ];
+      _todoList
+          .add(Todo(title: title, description: description, todoTime: date));
     });
+    Navigator.pop(context);
   }
 
   @override
   void initState() {
-    _addTodo();
     super.initState();
   }
 
@@ -38,6 +30,22 @@ class _TodoListScreenState extends State<TodoListScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: _showAppBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(15))),
+              backgroundColor: Color(0xff363636),
+              builder: (context) {
+                return _bottomSheetWidget();
+              });
+        },
+        backgroundColor: Color(0xff8687E7),
+        child: Icon(Icons.add),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(
@@ -53,7 +61,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 }),
                 itemCount: _todoList.length,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -158,6 +166,122 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     fontWeight: FontWeight.w400),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomSheetWidget() {
+    String? title, description;
+    DateTime? date;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          25.0, 25.0, 25.0, MediaQuery.of(context).viewInsets.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Add Task",
+            style: GoogleFonts.lato(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.white.withOpacity(0.87)),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextField(
+            cursorColor: const Color(0xff979797),
+            style: GoogleFonts.lato(
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+              color: Colors.white.withOpacity(0.87),
+            ),
+            onChanged: (value) {
+              title = value;
+            },
+            decoration: InputDecoration(
+                hintText: "Title",
+                hintStyle: GoogleFonts.lato(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                  color: const Color(0xffafafaf),
+                ),
+                border: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797))),
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797))),
+                focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797)))),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextField(
+            cursorColor: const Color(0xff979797),
+            style: GoogleFonts.lato(
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+              color: Colors.white.withOpacity(0.87),
+            ),
+            onChanged: (value) {
+              description = value;
+            },
+            decoration: InputDecoration(
+                hintText: "Description",
+                hintStyle: GoogleFonts.lato(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 18,
+                  color: const Color(0xffafafaf),
+                ),
+                border: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797))),
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797))),
+                focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797)))),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              IconButton(
+                  onPressed: () async {
+                    date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2025));
+                    print(date);
+                  },
+                  icon: Image.asset("assets/timer.png")),
+              const SizedBox(
+                width: 15,
+              ),
+              IconButton(onPressed: () {}, icon: Image.asset("assets/tag.png")),
+              const SizedBox(
+                width: 15,
+              ),
+              IconButton(
+                  onPressed: () {}, icon: Image.asset("assets/flag.png")),
+              const Spacer(),
+              IconButton(
+                  onPressed: () {
+                    if (title != null && description != null && date != null) {
+                      _addTodo(title!, description!, date!);
+                    } else {
+                      print("Date de bhai");
+                    }
+                  },
+                  icon: Image.asset("assets/send.png")),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
           ),
         ],
       ),
