@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/models/todo_model.dart';
 
 import '../widgets/todo_tile.dart';
@@ -19,16 +22,49 @@ class _TodoListScreenState extends State<TodoListScreen> {
   DateTime? date;
 
   void _addTodo(String title, String description, DateTime date) {
+    Todo _todo = Todo(title: title, description: description, todoTime: date);
     setState(() {
-      _todoList
-          .add(Todo(title: title, description: description, todoTime: date));
+      _todoList.add(_todo);
     });
     Navigator.pop(context);
+    setData();
   }
 
   @override
   void initState() {
+    getData();
     super.initState();
+  }
+
+  List<String> convertTodolistToStringList() {
+    // Todo List -> Map list -> STring list
+    List<Map<String, dynamic>> todoInMap =
+        _todoList.map((e) => e.toJson()).toList();
+    List<String> todoInString = todoInMap.map((e) => jsonEncode(e)).toList();
+
+    return todoInString;
+  }
+
+  void convertStringListInToTodoList(List<String> todoInString) {
+    // STring list -> Map list -> Todo list
+    List todoInMap = todoInString.map((e) => jsonDecode(e)).toList();
+    List<Todo> todoInClass = todoInMap.map((e) => Todo.fromJson(e)).toList();
+
+    setState(() {
+      _todoList = todoInClass;
+    });
+  }
+
+  Future<void> setData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setStringList('todo_list', convertTodolistToStringList());
+  }
+
+  Future<void> getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? todoInString = prefs.getStringList('todo_list');
+    convertStringListInToTodoList(todoInString ?? []);
   }
 
   void searchTodo(String searchKey) {
