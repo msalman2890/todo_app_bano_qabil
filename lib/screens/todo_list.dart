@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_app/models/todo_model.dart';
+
+import '../widgets/todo_tile.dart';
 
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
@@ -79,7 +82,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   Todo item = _searchedTodoList != null
                       ? _searchedTodoList![index]
                       : _todoList[index];
-                  return _showTodoTile(item);
+                  return TodoTile(todo: item);
                 }),
                 itemCount: _searchedTodoList != null
                     ? _searchedTodoList!.length
@@ -148,52 +151,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
           border: const OutlineInputBorder(),
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xff979797)))),
-    );
-  }
-
-  Container _showTodoTile(Todo todo) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(15),
-      width: double.infinity,
-      decoration: BoxDecoration(
-          color: const Color(0xff363636),
-          borderRadius: BorderRadius.circular(4)),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.circle_outlined,
-            size: 16,
-            color: Colors.white,
-          ),
-          const SizedBox(
-            width: 12,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${todo.title}",
-                style: GoogleFonts.lato(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400),
-              ),
-              const SizedBox(
-                height: 6,
-              ),
-              Text(
-                "${todo.todoTime}",
-                style: GoogleFonts.lato(
-                    fontSize: 14,
-                    color: const Color(0xffafafaf),
-                    fontWeight: FontWeight.w400),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -278,7 +235,15 @@ class _TodoListScreenState extends State<TodoListScreen> {
                         initialDate: DateTime.now(),
                         firstDate: DateTime.now(),
                         lastDate: DateTime(2025));
+
+                    TimeOfDay? time = await showTimePicker(
+                        context: context, initialTime: TimeOfDay.now());
                     print(date);
+                    print(time);
+                    if (time != null) {
+                      date = DateTime(date!.year, date!.month, date!.day,
+                          time.hour, time.minute);
+                    }
                   },
                   icon: Image.asset("assets/timer.png")),
               const SizedBox(
