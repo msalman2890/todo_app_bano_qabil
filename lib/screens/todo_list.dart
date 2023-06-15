@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/controller/todo_controller.dart';
 import 'package:todo_app/models/todo_model.dart';
-
 import '../widgets/todo_tile.dart';
 
 class TodoListScreen extends StatefulWidget {
@@ -16,71 +15,16 @@ class TodoListScreen extends StatefulWidget {
 }
 
 class _TodoListScreenState extends State<TodoListScreen> {
-  List<Todo> _todoList = [];
-  List<Todo>? _searchedTodoList;
+  TodoController controller = TodoController();
   String? title, description;
   DateTime? date;
 
-  void _addTodo(String title, String description, DateTime date) {
-    Todo _todo = Todo(title: title, description: description, todoTime: date);
-    setState(() {
-      _todoList.add(_todo);
-    });
-    Navigator.pop(context);
-    setData();
-  }
-
   @override
   void initState() {
-    getData();
-    super.initState();
-  }
-
-  List<String> convertTodolistToStringList() {
-    // Todo List -> Map list -> STring list
-    List<Map<String, dynamic>> todoInMap =
-        _todoList.map((e) => e.toJson()).toList();
-    List<String> todoInString = todoInMap.map((e) => jsonEncode(e)).toList();
-
-    return todoInString;
-  }
-
-  void convertStringListInToTodoList(List<String> todoInString) {
-    // STring list -> Map list -> Todo list
-    List todoInMap = todoInString.map((e) => jsonDecode(e)).toList();
-    List<Todo> todoInClass = todoInMap.map((e) => Todo.fromJson(e)).toList();
-
     setState(() {
-      _todoList = todoInClass;
+      controller.getData();
     });
-  }
-
-  Future<void> setData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.setStringList('todo_list', convertTodolistToStringList());
-  }
-
-  Future<void> getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? todoInString = prefs.getStringList('todo_list');
-    convertStringListInToTodoList(todoInString ?? []);
-  }
-
-  void searchTodo(String searchKey) {
-    if (searchKey.isEmpty) {
-      setState(() {
-        _searchedTodoList = null;
-      });
-    } else {
-      List<Todo> results = _todoList
-          .where((element) => element.title.contains(searchKey))
-          .toList();
-
-      setState(() {
-        _searchedTodoList = results;
-      });
-    }
+    super.initState();
   }
 
   @override
@@ -93,16 +37,16 @@ class _TodoListScreenState extends State<TodoListScreen> {
           showModalBottomSheet(
               context: context,
               isScrollControlled: true,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(15))),
-              backgroundColor: Color(0xff363636),
+              backgroundColor: const Color(0xff363636),
               builder: (context) {
                 return _bottomSheetWidget();
               });
         },
-        backgroundColor: Color(0xff8687E7),
-        child: Icon(Icons.add),
+        backgroundColor: const Color(0xff8687E7),
+        child: const Icon(Icons.add),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -115,14 +59,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
             Expanded(
               child: ListView.builder(
                 itemBuilder: ((context, index) {
-                  Todo item = _searchedTodoList != null
-                      ? _searchedTodoList![index]
-                      : _todoList[index];
+                  Todo item = controller.searchedTodoList != null
+                      ? controller.searchedTodoList![index]
+                      : controller.todoList[index];
                   return TodoTile(todo: item);
                 }),
-                itemCount: _searchedTodoList != null
-                    ? _searchedTodoList!.length
-                    : _todoList.length,
+                itemCount: controller.searchedTodoList != null
+                    ? controller.searchedTodoList!.length
+                    : controller.todoList.length,
               ),
             ),
           ],
@@ -166,7 +110,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
         fontSize: 16,
         color: const Color(0xffAFAFAF),
       ),
-      onChanged: searchTodo,
+      onChanged: (value) {
+        setState(() {
+          controller.searchTodo(value);
+        });
+      },
       decoration: InputDecoration(
           fillColor: const Color(0xff1d1d1d),
           filled: true,
@@ -299,7 +247,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     print(date);
                     // true , true, false
                     if (title != null && description != null && date != null) {
-                      _addTodo(title!, description!, date!);
+                      setState(() {
+                        controller.addTodo(
+                            title!, description!, date!, context);
+                      });
                     } else {
                       print("Date de bhai");
                     }
