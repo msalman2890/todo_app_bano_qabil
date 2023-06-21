@@ -20,12 +20,16 @@ class _TodoTileState extends State<TodoTile> {
       padding: const EdgeInsets.all(15),
       width: double.infinity,
       decoration: BoxDecoration(
-          color: const Color(0xff363636),
+          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(4)),
       child: Row(
         children: [
           Checkbox(
               value: widget.todo.isCompleted,
+              activeColor: Theme.of(context).colorScheme.primary,
+              side: BorderSide(color: Theme.of(context).colorScheme.primary),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100)),
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
@@ -41,21 +45,13 @@ class _TodoTileState extends State<TodoTile> {
             children: [
               Text(
                 "${widget.todo.title}",
-                style: GoogleFonts.lato(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400),
               ),
               const SizedBox(
                 height: 6,
               ),
               Text(
-                "${DateFormat("EEEE, MMM d, yyyy -  hh:mm a").format(widget.todo.todoTime)}",
-                style: GoogleFonts.lato(
-                    fontSize: 14,
-                    color: const Color(0xffafafaf),
-                    fontWeight: FontWeight.w400),
-              ),
+                  "${DateFormat("EEEE, MMM d, yyyy -  hh:mm a").format(widget.todo.todoTime)}",
+                  style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
         ],

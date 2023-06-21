@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/controller/todo_controller.dart';
 import 'package:todo_app/models/todo_model.dart';
@@ -22,7 +23,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   @override
   void initState() {
     setState(() {
-      controller.getData();
+      controller.getData().then((value) => setState(() {}));
     });
     super.initState();
   }
@@ -40,12 +41,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
               shape: const RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(15))),
-              backgroundColor: const Color(0xff363636),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               builder: (context) {
                 return _bottomSheetWidget();
               });
         },
-        backgroundColor: const Color(0xff8687E7),
         child: const Icon(Icons.add),
       ),
       body: Padding(
@@ -69,6 +69,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     : controller.todoList.length,
               ),
             ),
+            Lottie.network(
+                "https://assets8.lottiefiles.com/packages/lf20_x62chJ.json")
           ],
         ),
       ),
@@ -77,17 +79,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   AppBar _showAppBar() {
     return AppBar(
-      backgroundColor: Colors.black,
       leading: Padding(
         padding: const EdgeInsets.only(left: 20),
         child: Image.asset("assets/sort.png"),
       ),
       title: Text(
         'Todo',
-        style: GoogleFonts.lato(
-          fontWeight: FontWeight.w400,
-          fontSize: 20,
-        ),
       ),
       actions: [
         Padding(
@@ -127,11 +124,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
             ),
           ),
           hintText: "Search for your task...",
-          hintStyle: GoogleFonts.lato(
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            color: const Color(0xffAFAFAF),
-          ),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: const Color(0xffAFAFAF)),
           border: const OutlineInputBorder(),
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xff979797)))),
