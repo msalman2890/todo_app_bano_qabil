@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/controller/todo_controller.dart';
-import 'package:todo_app/models/todo_model.dart';
+
+import '../controller/todo_controller.dart';
+import '../models/todo_model.dart';
 import '../widgets/todo_tile.dart';
 
 class TodoListScreen extends StatefulWidget {
@@ -19,6 +16,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   TodoController controller = TodoController();
   String? title, description;
   DateTime? date;
+  int currentSelectedIndex = 0;
 
   @override
   void initState() {
@@ -32,7 +30,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: _showAppBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -69,68 +66,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     : controller.todoList.length,
               ),
             ),
-            Lottie.network(
-                "https://assets8.lottiefiles.com/packages/lf20_x62chJ.json")
+            // Lttie.network(
+            //     "https://assets8.lottiefiles.com/packages/lf20_x62chJ.json")
           ],
         ),
       ),
-    );
-  }
-
-  AppBar _showAppBar() {
-    return AppBar(
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 20),
-        child: Image.asset("assets/sort.png"),
-      ),
-      title: Text(
-        'Todo',
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: Image.asset(
-            "assets/user.png",
-            height: 42,
-            width: 42,
-          ),
-        )
-      ],
-    );
-  }
-
-  TextField _showSearchTextField() {
-    return TextField(
-      cursorColor: const Color(0xff979797),
-      style: GoogleFonts.lato(
-        fontWeight: FontWeight.w400,
-        fontSize: 16,
-        color: const Color(0xffAFAFAF),
-      ),
-      onChanged: (value) {
-        setState(() {
-          controller.searchTodo(value);
-        });
-      },
-      decoration: InputDecoration(
-          fillColor: const Color(0xff1d1d1d),
-          filled: true,
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              "assets/search.png",
-              height: 24,
-              width: 24,
-            ),
-          ),
-          hintText: "Search for your task...",
-          hintStyle: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: const Color(0xffAFAFAF)),
-          border: const OutlineInputBorder(),
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xff979797)))),
     );
   }
 
@@ -259,6 +199,41 @@ class _TodoListScreenState extends State<TodoListScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  TextField _showSearchTextField() {
+    return TextField(
+      cursorColor: const Color(0xff979797),
+      style: GoogleFonts.lato(
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        color: const Color(0xffAFAFAF),
+      ),
+      onChanged: (value) {
+        setState(() {
+          controller.searchTodo(value);
+        });
+      },
+      decoration: InputDecoration(
+          fillColor: const Color(0xff1d1d1d),
+          filled: true,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              "assets/search.png",
+              height: 24,
+              width: 24,
+            ),
+          ),
+          hintText: "Search for your task...",
+          hintStyle: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: const Color(0xffAFAFAF)),
+          border: const OutlineInputBorder(),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff979797)))),
     );
   }
 }

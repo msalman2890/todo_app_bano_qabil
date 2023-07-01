@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'screens/todo_list.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +29,8 @@ class MyApp extends StatelessWidget {
             surface: Colors.black,
             onSurface: Colors.white,
           ),
+          drawerTheme:
+              DrawerThemeData(backgroundColor: const Color(0xff363636)),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
               backgroundColor: const Color(0xff8687E7)),
           appBarTheme: AppBarTheme(
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
                   fontSize: 14,
                   color: const Color(0xffafafaf),
                   fontWeight: FontWeight.w400))),
-      home: const TodoListScreen(),
+      home: const HomeScreen(),
     );
   }
 }
