@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../controller/todo_controller.dart';
 import '../models/todo_model.dart';
@@ -17,6 +20,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   String? title, description;
   DateTime? date;
   int currentSelectedIndex = 0;
+  File? todoImage;
 
   @override
   void initState() {
@@ -91,6 +95,74 @@ class _TodoListScreenState extends State<TodoListScreen> {
           ),
           const SizedBox(
             height: 20,
+          ),
+          InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(15))),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  builder: (context) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          onTap: () async {
+                            final ImagePicker picker = ImagePicker();
+                            XFile? image = await picker.pickImage(
+                                source: ImageSource.camera);
+                            print(image?.name);
+                            print(image?.path);
+                            if (image != null) {
+                              setState(() {
+                                todoImage = File(image!.path);
+                              });
+                            }
+                            Navigator.pop(context);
+                          },
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          iconColor: Theme.of(context).colorScheme.onPrimary,
+                          leading: Icon(Icons.camera),
+                          title: Text("Pick from Camera"),
+                        ),
+                        ListTile(
+                          onTap: () async {
+                            final ImagePicker picker = ImagePicker();
+                            XFile? image = await picker.pickImage(
+                                source: ImageSource.gallery);
+                            print(image?.name);
+                            print(image?.path);
+                            if (image != null) {
+                              setState(() {
+                                todoImage = File(image!.path);
+                              });
+                            }
+                            Navigator.pop(context);
+                          },
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          iconColor: Theme.of(context).colorScheme.onPrimary,
+                          leading: Icon(Icons.photo),
+                          title: Text("Pick from Gallery"),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    );
+                  });
+            },
+            child: CircleAvatar(
+              child: Icon(Icons.add_a_photo),
+              radius: 35,
+              foregroundImage: todoImage == null ? null : FileImage(todoImage!),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            height: 10,
           ),
           TextField(
             cursorColor: const Color(0xff979797),
