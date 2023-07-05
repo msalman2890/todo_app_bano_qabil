@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
             surface: Colors.black,
             onSurface: Colors.white,
           ),
+          dialogTheme: DialogTheme(backgroundColor: Colors.black),
           drawerTheme:
               DrawerThemeData(backgroundColor: const Color(0xff363636)),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
