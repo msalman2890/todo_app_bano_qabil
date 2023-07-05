@@ -39,21 +39,31 @@ class _TodoTileState extends State<TodoTile> {
           const SizedBox(
             width: 12,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${widget.todo.title}",
-              ),
-              const SizedBox(
-                height: 6,
-              ),
-              Text(
-                  "${DateFormat("EEEE, MMM d, yyyy -  hh:mm a").format(widget.todo.todoTime)}",
-                  style: Theme.of(context).textTheme.bodySmall),
-            ],
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${widget.todo.title}",
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Text(
+                    "${DateFormat("EEEE, MMM d, yyyy -  hh:mm a").format(widget.todo.todoTime)}",
+                    style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
           ),
+          const SizedBox(
+            width: 12,
+          ),
+          if (widget.todo.image != null)
+            Image.file(
+              widget.todo.image!,
+              width: 30,
+            )
         ],
       ),
     );

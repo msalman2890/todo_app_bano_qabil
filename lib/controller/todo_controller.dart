@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,8 +11,10 @@ class TodoController {
   List<Todo>? searchedTodoList;
 
   void addTodo(
-      String title, String description, DateTime date, BuildContext context) {
-    Todo _todo = Todo(title: title, description: description, todoTime: date);
+      String title, String description, DateTime date, BuildContext context,
+      {File? image}) {
+    Todo _todo = Todo(
+        title: title, description: description, todoTime: date, image: image);
     todoList.add(_todo);
     Navigator.pop(context);
     setData();

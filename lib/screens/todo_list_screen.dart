@@ -250,14 +250,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
               const Spacer(),
               IconButton(
                   onPressed: () {
-                    print(title);
-                    print(description);
-                    print(date);
-                    // true , true, false
                     if (title != null && description != null && date != null) {
                       setState(() {
-                        controller.addTodo(
-                            title!, description!, date!, context);
+                        controller.addTodo(title!, description!, date!, context,
+                            image: todoImage);
                       });
                     } else {
                       print("Date de bhai");
