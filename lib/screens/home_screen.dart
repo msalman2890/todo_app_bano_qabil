@@ -11,6 +11,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentSelectedIndex = 0;
+  PageController controller =
+      PageController(initialPage: 0, viewportFraction: 1.0);
 
   final List<Widget> _tabs = const [
     TodoListScreen(),
@@ -31,9 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
             print(tappedIndex);
             setState(() {
               currentSelectedIndex = tappedIndex;
+              controller.animateToPage(tappedIndex,
+                  duration: Duration(milliseconds: 500), curve: Curves.linear);
             });
           },
-
           backgroundColor: Theme.of(context).colorScheme.secondary,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Theme.of(context).colorScheme.primary,
@@ -48,7 +51,17 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
           ],
         ),
-        body: _tabs[currentSelectedIndex]);
+        body: PageView(
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          controller: controller,
+          children: _tabs,
+          onPageChanged: (value) {
+            setState(() {
+              currentSelectedIndex = value;
+            });
+          },
+        ));
   }
 
   AppBar _showAppBar() {

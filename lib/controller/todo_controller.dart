@@ -17,6 +17,10 @@ class TodoController {
         title: title, description: description, todoTime: date, image: image);
     todoList.add(_todo);
     Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Todo has been added successfully"),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 3)));
     setData();
   }
 
